@@ -7,5 +7,9 @@ spring:
     password: admin
   jpa:
     show-sql: true
-    open-in-view: false
-    #Close DB Connection for Entire HTTP Request-Response and Open It only When Called and close it directly after service returns output.
+    open-in-view: false #Close DB Connection for Entire HTTP Request-Response and Open It only When Called and close it directly after service returns output.
+  jwt:
+    secret: ${JWT_SECRET}
+    accessTokenExpiration: 300 # 5m
+    refreshTokenExpiration: 604800 # 7d
+#VALIDATING JSON WEB TOKENS
