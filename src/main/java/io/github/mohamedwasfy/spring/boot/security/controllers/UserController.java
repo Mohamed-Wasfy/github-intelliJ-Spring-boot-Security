@@ -6,13 +6,20 @@ import io.github.mohamedwasfy.spring.boot.security.dtos.request.UpdateUserReques
 import io.github.mohamedwasfy.spring.boot.security.dtos.response.UserDto;
 import io.github.mohamedwasfy.spring.boot.security.mappers.UserMapper;
 import io.github.mohamedwasfy.spring.boot.security.repositories.UserRepository;
+import io.github.mohamedwasfy.spring.boot.security.services.ExternalAuthService;
+import io.github.mohamedwasfy.spring.boot.security.services.JwtService;
+import io.github.mohamedwasfy.spring.boot.security.services.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
@@ -26,22 +33,35 @@ public class UserController {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     @GetMapping
-    public List<UserDto> getAllUsers (
-//        @RequestHeader(required = false, name = "x-auth-token") String authToken,
+    public ResponseEntity<?> getAllUsers (
+        @RequestHeader String authorization,
         @RequestParam(required = false, defaultValue = "", name = "sortBy") String sortBy
     ) {
-//        System.out.println(authToken);
+
+        if (authorization == null || !authorization.startsWith("Bearer ")) {
+            return ResponseEntity.status(401).body("Missing or malformed Authorization header");
+        }
+
+        String token = authorization.substring(7);
+
+        if (!jwtService.validateToken(token)) {
+            return ResponseEntity.status(401).body("Invalid or expired token");
+        }
+
 
         if(!Set.of("name", "email").contains(sortBy)) {
             sortBy = "name";
         }
 
-        return userRepository.findAll(Sort.by(sortBy).ascending())
-                .stream()
-                .map(userMapper::toDto)
-                .toList();
+        return ResponseEntity.ok (
+            userRepository.findAll(Sort.by(sortBy).ascending())
+            .stream()
+            .map(userMapper::toDto)
+            .toList()
+        );
     }
 
     @GetMapping("/{id}")

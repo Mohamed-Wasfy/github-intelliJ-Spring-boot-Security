@@ -12,4 +12,10 @@ spring:
     secret: ${JWT_SECRET}
     accessTokenExpiration: 300 # 5m
     refreshTokenExpiration: 604800 # 7d
+  external:
+    auth:
+      token-url: https://tenant1.sasserver.demo.sas.com/SASLogon/oauth/token
+      client-id: ${SAS_CLIENT_SECRET}
+      username: ${SAS_USERNAME}
+      password: ${SAS_PASSWORD}
 #VALIDATING JSON WEB TOKENS

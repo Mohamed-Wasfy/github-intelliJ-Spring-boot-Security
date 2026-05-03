@@ -7,7 +7,6 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.util.Date;
 
 @AllArgsConstructor
