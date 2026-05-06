@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -40,6 +41,23 @@ public class UserController {
         @RequestHeader String authorization,
         @RequestParam(required = false, defaultValue = "", name = "sortBy") String sortBy
     ) {
+        // With a base URL -- Preferred for talking to one API.
+
+        RestClient client = RestClient.builder()
+                .baseUrl("https://tenant1.sasserver.demo.sas.com")
+                .defaultHeader("Accept", "application/json")
+                .defaultHeader("Authorization", "Bearer " + authorization)
+                .defaultHeader("Content-Type", "application/json")
+                .requestInterceptor((req, body, execution) -> {
+                    System.out.println(">> " + req.getMethod() + " " + req.getURI());
+                    return execution.execute(req, body);
+                })
+                .build();
+
+        System.out.println(client);
+
+
+        // ------------------------------------------------------------------------------------------------------
 
         if (authorization == null || !authorization.startsWith("Bearer ")) {
             return ResponseEntity.status(401).body("Missing or malformed Authorization header");
@@ -50,7 +68,6 @@ public class UserController {
         if (!jwtService.validateToken(token)) {
             return ResponseEntity.status(401).body("Invalid or expired token");
         }
-
 
         if(!Set.of("name", "email").contains(sortBy)) {
             sortBy = "name";
