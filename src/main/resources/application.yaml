@@ -2,20 +2,37 @@ spring:
   application:
     name: spring-boot-security
   datasource:
-    url: jdbc:mysql://localhost:3306/store_api?createDatabaseIfNotExist=true
-    username: root
-    password: admin
+    url: jdbc:postgresql://localhost:5332/store
+    username: postgres
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
   jpa:
     show-sql: true
     open-in-view: false #Close DB Connection for Entire HTTP Request-Response and Open It only When Called and close it directly after service returns output.
-  jwt:
-    secret: ${JWT_SECRET}
-    accessTokenExpiration: 300 # 5m
-    refreshTokenExpiration: 604800 # 7d
+    properties:
+      hibernate:
+       dialect: org.hibernate.dialect.PostgreSQLDialect
+#  jwt:
+#    secret: ${JWT_SECRET}
+#    accessTokenExpiration: 300 # 5m
+#    refreshTokenExpiration: 604800 # 7d
   external:
     auth:
-      token-url: https://tenant1.sasserver.demo.sas.com/SASLogon/oauth/token
-      client-id: ${SAS_CLIENT_SECRET}
-      username: ${SAS_USERNAME}
-      password: ${SAS_PASSWORD}
+      token-url:  https://tenant1.sasserver.demo.sas.com/SASLogon/oauth/token
+#      issuer-uri: https://tenant1.sasserver.demo.sas.com/SASLogon
+      client-id: ${client_id}
+      client-secret: ${SAS_CLIENT_SECRET}
+      username:  ${SAS_USERNAME}
+      password:  ${SAS_PASSWORD}
+  flyway:
+    baseline-on-migrate: true
+    baseline-version: 0
 #VALIDATING JSON WEB TOKENS
+
+
+#  curl --request POST \
+#  --url http://example.com/SASLogon/oauth/token \
+#  --header 'Accept: application/json' \
+#  --header 'Authorization: Bearer YOUR_ACCESS_TOKEN' \
+#  --header 'Content-Type: application/x-www-form-urlencoded' \
+#  --data ''

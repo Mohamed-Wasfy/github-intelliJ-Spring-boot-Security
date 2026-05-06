@@ -144,3 +144,89 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 }
+
+// Part 01 - Fundamentals
+// Apache Kafka Series - Welcome!
+// 1- Kafka For Beginners: get a strong base for Kafka, basic operations, write your first producers and consumers.
+////
+// 2- Kafka Connect API: Understanding how to import / export data to / from Kafka.
+// 3- Kafka Streams API: Learn how to process and transform data within Kafka.
+// 4- KsqlDB: Writes Kafka Streams applications using SQL.
+// 5- Confluent Components: REST Proxy and Schema Registry.
+// 6- Kafka Security: Setup Kafka Security in a Cluster and Integrate your applications with Kafka Security.
+// 7- Kafka Monitoring and Operations: use [Prometheus] and [Grafana] to monitor Kafka, learn operations.
+// 8- Kafka Cluster Setup & Administration: Get a deep understanding of how Kafka & Zookeeper works, how to Setup Kafka and various administration tasks.
+// 9- Confluent Certifications for Developers Practice Exams.
+// 10- Confluent Certifications for Operators Practice Exams.
+///
+// Kafka Topics: a Particular stream of data within your Kafka Cluster.
+// Kafka Cluster:(log - purchases - twitter_tweets - trucks_gps).
+// Kafka Topics [inside Kafka Cluster].
+// Like a table in a database [without all the constraints].
+// You can have as many topics as you want.
+// A topic is identified by its name.
+// Any kind of message format.
+// The sequence of messages is called a data stream.
+// You cannot query topics, instead, use Kafka Producers to send data and Kafka Consumers to read the data.
+
+///
+
+// Partitions and offsets:
+
+// Topics are split in partitions [example: 100 partitions].
+
+// Messages within each partition are ordered.
+
+// Each message within a partition gets an incremental id, called offset.
+
+// Partition 0 - Partition 1 - Partition 2
+
+// And then as I keep
+
+// Kafka topics are immutable: once data is written to a Partition, it cannot be changed.
+
+// You can not Delete, Update in Kafka ?!
+
+// Say you have a fleet of trucks; each truck reports its GPS position to Kafka.
+
+// Each truck will send a message to Kafka every 20 Seconds, each message will contain the truck ID and the truck position [latitude and longitude].
+
+////
+
+// Topics, partitions and offsets - important notes.
+
+// Kafka Topic [Partition 0 - Partition 1 - Partition 2].
+
+// Once the data is written to a partition, it cannot be changed [immutability].
+
+// Data in Kafka is only kept for a limited time [default is one week - configurable].
+
+// E.g. offset 3 in partition 0 doesn't represent the same data as offset 3 in partition 1.
+
+// Offsets are not re-used even if previous message have been deleted.
+
+// Order is guaranteed only within a partition [not across partitions].
+
+// Data is assigned randomly to a Partition unless a Key is provided.
+
+// Topics, partitions, offsets.
+
+// Producers
+
+// Producers write data to topics [which are made of partitions].
+// Producers know to which partition to write to [and which Kafka broker has it].
+// In case of Kafka broker failures, Producers will automatically recover.
+
+// Topic-A / Partition 0 [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+// Topic-A / Partition 1 [0, 1, 2, 3, 4, 5, 6, 7, 8]
+// Topic-A / Partition 2 [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+// This load is balanced to many brokers thanks to the number of partitions.
+// Producers: Message keys
+// Producers can choose to send a key with the message(String, number, binary, etc...)
+// PRODUCERS: -> Topic-A / Partition 0
+// If key  = null, data is sent round robin (Partition 0, then 1, then 2).
+// If key != null, then all messages for that key will always go to the same partition [hashing].
+// A Key are typically sent if you need message ordering for a Specific field (ex: truck_id).
+
+// truck_id_123
+// Data will always be in Partition 0.
